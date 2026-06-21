@@ -13,7 +13,7 @@ Un ensemble de hooks et de skills qui connectent Claude Code au workflow git de 
 | `skills/session_save/` | Skill de fin de session : met à jour TODO.md / ARCHITECTURE.md / CLAUDE.md / CHANGELOG.md, puis écrit le message de commit |
 | `skills/session_handoff/` | Crée un fichier handoff autonome pour passer la main à un autre agent ou une autre session |
 
-**Pourquoi :** sans ça, Claude Code n'a aucune mémoire de ton projet entre les sessions, ne se synchronise pas avec git, et tu perds le contexte à chaque reset.
+**Pourquoi :** Claude Code repart de zéro à chaque session — sans mémoire de ce qui a été fait avant. Ce système injecte automatiquement le contexte du projet au démarrage, maintient les fichiers de documentation à jour via `/session_save`, et commit + push en fin de session sans intervention manuelle.
 
 ## Comment installer
 
