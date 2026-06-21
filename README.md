@@ -69,7 +69,7 @@ Récupère et écris :
 Ces fichiers sont le socle du système de session. Génère leur contenu en fonction du projet courant.
 
 **`CLAUDE.md`** — Instructions projet pour Claude Code. Doit inclure :
-- Une section **"Carte de la documentation"** listant CLAUDE.md, ARCHITECTURE.md, TODO.md, CHANGELOG.md
+- Une section **"Fichiers de documentation du projet"** listant CLAUDE.md, ARCHITECTURE.md, TODO.md, CHANGELOG.md
 - Une section **"Cycle de session"** : hook SessionStart → travail → `/session_save` → hook Stop
 - Présentation du projet (ce que c'est, URL du repo, qui l'utilise)
 - Stack technique

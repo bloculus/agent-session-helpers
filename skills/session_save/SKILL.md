@@ -76,8 +76,8 @@ de le lancer ("On lance `session_save` ?") sans l'invoquer automatiquement.
    mise à jour dans `CLAUDE.md` :
    - **Convention de code** : nouveau pattern adopté
    - **Commande de build/test** : nouvelle commande découverte ou changée
-   - **Documentation** : nouveau fichier de doc à référencer dans la "Carte de la
-     documentation"
+   - **Documentation** : nouveau fichier de doc à référencer dans les "Fichiers de
+     documentation du projet"
    - **Stack technique** : changement de version majeure ou de deployment target,
      nouvelle dépendance majeure
    - **Règle de workflow** : une règle qui, si présente, aurait évité une question,
