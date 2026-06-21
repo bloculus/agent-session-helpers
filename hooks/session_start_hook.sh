@@ -1,0 +1,58 @@
+#!/bin/bash
+# SessionStart hook — runs automatically at the beginning of each new Claude Code session
+# Syncs the repo with origin/main and injects a context file into Claude's context
+
+REPO=$(git rev-parse --show-toplevel 2>/dev/null)
+
+# Skip if not in a git repo
+[ -n "$REPO" ] || exit 0
+
+ERROR_LOG="$REPO/session_error.log"
+
+# ── Configure which file to inject as context ──────────────────────────────
+# Default: CHANGELOG.md. Change to README.md or any other file if preferred.
+CONTEXT_FILE="$REPO/CHANGELOG.md"
+# ──────────────────────────────────────────────────────────────────────────
+
+# Attempt to pull. On conflict: abort rebase cleanly.
+PULL_FAILED=false
+PULL_OUTPUT=$(git -C "$REPO" fetch origin main 2>&1; git -C "$REPO" rebase --autostash origin/main 2>&1)
+PULL_EXIT=$?
+if [ $PULL_EXIT -ne 0 ]; then
+  git -C "$REPO" rebase --abort > /dev/null 2>&1
+  PULL_FAILED=true
+fi
+
+if $PULL_FAILED; then
+  # If stop hook already wrote an error (push skipped), compound the message
+  if [ -f "$ERROR_LOG" ]; then
+    printf "Previous session failed to push AND current pull also failed.\n\ngit output:\n%s" "$PULL_OUTPUT" > "$ERROR_LOG"
+  else
+    printf "git pull --rebase failed (exit %s):\n\n%s" "$PULL_EXIT" "$PULL_OUTPUT" > "$ERROR_LOG"
+  fi
+else
+  # No pull error: remove error log if it exists
+  rm -f "$ERROR_LOG"
+fi
+
+# Inject context file
+if [ -f "$CONTEXT_FILE" ]; then
+  FILENAME=$(basename "$CONTEXT_FILE")
+  MARKER=$(echo "$FILENAME" | tr '[:lower:]' '[:upper:]' | tr '.' '_')
+  echo "=== ${MARKER} START ==="
+  cat "$CONTEXT_FILE"
+  echo "=== ${MARKER} END ==="
+  echo ""
+fi
+
+# If session_error.log exists, inject instruction for Claude
+if [ -f "$ERROR_LOG" ]; then
+  echo "=== SESSION_ERROR.LOG START ==="
+  echo "⚠️ REPO SYNC ERROR DETECTED — content of session_error.log:"
+  cat "$ERROR_LOG"
+  echo ""
+  echo "Instructions: run git status, git log --oneline -5 HEAD, git log --oneline -5 origin/main. Attempt git pull --rebase --autostash. If resolved: git push, delete session_error.log, inform user. If failing: show diverging files, propose options, never ask user to run git commands. Start with: 'Une erreur de synchronisation du repo a été détectée. Je corrige.'"
+  echo "=== SESSION_ERROR.LOG END ==="
+fi
+
+exit 0

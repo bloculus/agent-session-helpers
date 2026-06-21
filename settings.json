@@ -1,0 +1,31 @@
+{
+  "permissions": {
+    "allow": [
+      "Skill(session_save)",
+      "Skill(session_handoff)"
+    ]
+  },
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "startup",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash $(git rev-parse --show-toplevel 2>/dev/null)/.claude/hooks/session_start_hook.sh"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash $(git rev-parse --show-toplevel 2>/dev/null)/.claude/hooks/stop_hook.sh"
+          }
+        ]
+      }
+    ]
+  }
+}
