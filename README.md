@@ -93,18 +93,18 @@ Ces fichiers sont le socle du système de session. Génère leur contenu en fonc
 | [BUG-1](#bug-1--titre) | Titre du bug | 🟡 Root cause identifiée — fix en attente de validation | Valider le fix |
 | [BUG-2](#bug-2--titre) | Titre du bug | ⚪ Archivé (disprouvé) | Aucune |
 
+Légende : ✅ Validé · 🟡 En cours / en attente · ⚪ Archivé / backlog · 🔴 Bloqué
+
 ---
 
 ## FEAT-1 — Titre
 
-[Description détaillée, hypothèses, logs, root cause...]
+[Description détaillée...]
 
 ## BUG-1 — Titre
 
-[Description détaillée, hypothèses, logs, root cause...]
+[Description détaillée, root cause, logs...]
 ```
-
-Légende statuts : ✅ Validé · 🟡 En cours / en attente · ⚪ Archivé / backlog · 🔴 Bloqué
 
 **`CHANGELOG.md`** — Historique des versions. Format suggéré :
 
