@@ -1,109 +1,109 @@
 # agent-session-helpers
 
-Claude Code session management for any dev project — auto git sync, auto-commit, and session skills.
+Gestion de session Claude Code pour n'importe quel projet de développement — synchronisation git automatique, commit automatique, et skills de session.
 
-## What it is
+## C'est quoi
 
-A small set of hooks and skills that wire Claude Code to your project's git workflow:
+Un ensemble de hooks et de skills qui connectent Claude Code au workflow git de ton projet :
 
-| Component | What it does |
+| Composant | Rôle |
 |---|---|
-| `hooks/session_start_hook.sh` | Auto git sync at session start + injects a context file (CHANGELOG.md by default) |
-| `hooks/stop_hook.sh` | Auto commit + push at session end (if `session_save` was run) |
-| `skills/session_save/` | End-of-session skill: updates TODO.md / ARCHITECTURE.md / CLAUDE.md / CHANGELOG.md, then writes the commit message |
-| `skills/session_handoff/` | Creates a self-contained handoff file to pass work to another agent or session |
+| `hooks/session_start_hook.sh` | Sync git auto au démarrage + injection d'un fichier de contexte (CHANGELOG.md par défaut) |
+| `hooks/stop_hook.sh` | Commit + push auto en fin de session (si `session_save` a été lancé) |
+| `skills/session_save/` | Skill de fin de session : met à jour TODO.md / ARCHITECTURE.md / CLAUDE.md / CHANGELOG.md, puis écrit le message de commit |
+| `skills/session_handoff/` | Crée un fichier handoff autonome pour passer la main à un autre agent ou une autre session |
 
-**Why:** without this, Claude Code has no memory of your project between sessions, doesn't sync with git, and you lose work when context resets.
+**Pourquoi :** sans ça, Claude Code n'a aucune mémoire de ton projet entre les sessions, ne se synchronise pas avec git, et tu perds le contexte à chaque reset.
 
-## How to install
+## Comment installer
 
-Give the URL of this page to Claude Code and ask it to follow the installation guide below.
+Donne l'URL de cette page à Claude Code et demande-lui de suivre le guide d'installation ci-dessous.
 
 ---
 
-## Installation guide (for Claude Code)
+## Guide d'installation (pour Claude Code)
 
-> You are about to install the agent-session-helpers system in a project. Follow each step in order.
+> Tu vas installer le système agent-session-helpers dans un projet. Suis chaque étape dans l'ordre.
 
-### Prerequisites
+### Prérequis
 
-- The project must be a git repository with a remote (`git remote -v` should return something).
-- You must have write access to the remote.
+- Le projet doit être un dépôt git avec un remote configuré (`git remote -v` doit retourner quelque chose).
+- Tu dois avoir les droits d'écriture sur le remote.
 
-### Step 1 — Create the `.claude/` directory structure
+### Étape 1 — Créer la structure `.claude/`
 
 ```bash
 mkdir -p .claude/hooks .claude/skills/session_save .claude/skills/session_handoff
 ```
 
-### Step 2 — Fetch and copy the hook scripts
+### Étape 2 — Récupérer et copier les hooks
 
-Fetch the two hook files from this repository and write them to `.claude/hooks/`:
+Récupère les deux fichiers de hook depuis ce dépôt et écris-les dans `.claude/hooks/` :
 
 - `https://raw.githubusercontent.com/bloculus/agent-session-helpers/main/hooks/stop_hook.sh` → `.claude/hooks/stop_hook.sh`
 - `https://raw.githubusercontent.com/bloculus/agent-session-helpers/main/hooks/session_start_hook.sh` → `.claude/hooks/session_start_hook.sh`
 
-Make them executable:
+Rends-les exécutables :
 
 ```bash
 chmod +x .claude/hooks/stop_hook.sh .claude/hooks/session_start_hook.sh
 ```
 
-**Optional:** open `.claude/hooks/session_start_hook.sh` and change the `CONTEXT_FILE` variable (line ~14) to any file you prefer to inject at session start. Default is `CHANGELOG.md`. Other options: `README.md`, `TODO.md`, or any other file.
+**Optionnel :** ouvre `.claude/hooks/session_start_hook.sh` et modifie la variable `CONTEXT_FILE` (ligne ~14) pour choisir le fichier injecté au démarrage de session. Défaut : `CHANGELOG.md`. Autres options : `README.md`, `TODO.md`, ou n'importe quel autre fichier.
 
-### Step 3 — Copy the skills
+### Étape 3 — Copier les skills
 
-Fetch and write:
+Récupère et écris :
 
 - `https://raw.githubusercontent.com/bloculus/agent-session-helpers/main/skills/session_save/SKILL.md` → `.claude/skills/session_save/SKILL.md`
 - `https://raw.githubusercontent.com/bloculus/agent-session-helpers/main/skills/session_handoff/SKILL.md` → `.claude/skills/session_handoff/SKILL.md`
 
-### Step 4 — Create `.claude/settings.json`
+### Étape 4 — Créer `.claude/settings.json`
 
-Fetch and write:
+Récupère et écris :
 
 - `https://raw.githubusercontent.com/bloculus/agent-session-helpers/main/settings.json` → `.claude/settings.json`
 
-### Step 5 — Create the four project documentation files
+### Étape 5 — Créer les quatre fichiers de documentation projet
 
-These files are the backbone of the session system. Generate their content based on what you know about the current project.
+Ces fichiers sont le socle du système de session. Génère leur contenu en fonction du projet courant.
 
-**`CLAUDE.md`** — Project instructions for Claude Code. Must include:
-- A **"Carte de la documentation"** table listing CLAUDE.md, ARCHITECTURE.md, TODO.md, CHANGELOG.md
-- A **"Cycle de session"** section explaining: SessionStart hook → work → `/session_save` → Stop hook
-- Project overview (what it is, repo URL, who uses it)
-- Tech stack
-- Dev rules (language conventions, key constraints)
-- Build/run commands
-- A **"Workflow"** section that includes: "Propose `/session_save` at the end of each task — never invoke it automatically"
+**`CLAUDE.md`** — Instructions projet pour Claude Code. Doit inclure :
+- Une section **"Carte de la documentation"** listant CLAUDE.md, ARCHITECTURE.md, TODO.md, CHANGELOG.md
+- Une section **"Cycle de session"** : hook SessionStart → travail → `/session_save` → hook Stop
+- Présentation du projet (ce que c'est, URL du repo, qui l'utilise)
+- Stack technique
+- Règles de dev (conventions de langue, contraintes clés)
+- Commandes de build/lancement
+- Une section **"Workflow"** incluant : "Proposer `/session_save` à la fin de chaque tâche — ne jamais l'invoquer automatiquement"
 
-**`ARCHITECTURE.md`** — Technical architecture of the project (components, data flow, key files, tech stack).
+**`ARCHITECTURE.md`** — Architecture technique du projet (composants, flux de données, fichiers clés, stack).
 
-**`TODO.md`** — Task and bug tracker. Suggested format:
+**`TODO.md`** — Suivi des tâches et bugs. Format suggéré :
 
 ```markdown
-# TODO — [Project Name]
+# TODO — [Nom du projet]
 
-## Features / Tasks
+## Fonctionnalités / Tâches
 
-| ID | Description | Status | Next action |
+| ID | Description | Statut | Prochaine action |
 |---|---|---|---|
-| FEAT-1 | ... | ✅ Done / 🟡 In progress / ⚪ Backlog | ... |
+| FEAT-1 | ... | ✅ Fait / 🟡 En cours / ⚪ Backlog | ... |
 
-## Known issues
+## Issues connues
 
-| ID | Description | Status | Next action |
+| ID | Description | Statut | Prochaine action |
 |---|---|---|---|
-| BUG-1 | ... | 🟡 Investigating | ... |
+| BUG-1 | ... | 🟡 En investigation | ... |
 ```
 
-**`CHANGELOG.md`** — Version history. Suggested format:
+**`CHANGELOG.md`** — Historique des versions. Format suggéré :
 
 ```markdown
 # Changelog
 
-Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
-Versioning: +0.1 per release, next integer for major rewrites.
+Format : [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/)
+Versioning : +0.1 par version, entier suivant pour les refontes majeures.
 
 ## [Unreleased]
 
@@ -116,11 +116,11 @@ Versioning: +0.1 per release, next integer for major rewrites.
 - ...
 ```
 
-### Step 6 — Create `.claude/settings.local.json` (not versioned)
+### Étape 6 — Créer `.claude/settings.local.json` (non versionné)
 
-This file holds per-machine Bash permission allowlists. It is excluded from git by the global Claude Code gitignore (`.config/git/ignore`), so each user creates their own.
+Ce fichier contient les permissions Bash par machine. Il est exclu de git par le gitignore global de Claude Code (`.config/git/ignore`), donc chaque utilisateur le crée pour lui-même.
 
-Create `.claude/settings.local.json` with the Bash permissions required by your project's tech stack. Examples:
+Crée `.claude/settings.local.json` avec les permissions adaptées au stack du projet. Exemple :
 
 ```json
 {
@@ -141,9 +141,9 @@ Create `.claude/settings.local.json` with the Bash permissions required by your 
 }
 ```
 
-Adapt the list to your stack (e.g. replace `npm` with `cargo`, `go`, `python`, etc.).
+Adapte la liste à ton stack (remplace `npm` par `cargo`, `go`, `python`, etc. selon le projet).
 
-### Step 7 — Commit everything
+### Étape 7 — Commiter tout
 
 ```bash
 git add CLAUDE.md ARCHITECTURE.md TODO.md CHANGELOG.md .claude/settings.json .claude/hooks/ .claude/skills/
@@ -151,28 +151,28 @@ git commit -m "chore: add Claude Code session management (agent-session-helpers)
 git push
 ```
 
-> `.claude/settings.local.json` is intentionally excluded from this commit — it's machine-specific.
+> `.claude/settings.local.json` est intentionnellement exclu de ce commit — il est spécifique à chaque machine.
 
-### Step 8 — Verify
+### Étape 8 — Vérifier
 
-1. Open the project in Claude Code — the SessionStart hook should run, sync git, and inject the context file.
-2. Do some work, then run `/session_save` — it should update the doc files and write `.claude/session_commit_msg.txt`.
-3. End the session — the Stop hook should automatically commit and push.
-4. Check GitHub to confirm the commit appears.
+1. Ouvre le projet dans Claude Code — le hook SessionStart doit tourner, synchroniser git et injecter le fichier de contexte.
+2. Fais une modification, puis lance `/session_save` — il doit mettre à jour les fichiers doc et écrire `.claude/session_commit_msg.txt`.
+3. Ferme la session — le hook Stop doit commiter et pusher automatiquement.
+4. Vérifie sur GitHub que le commit apparaît.
 
 ---
 
-## Skills reference
+## Référence des skills
 
 ### `/session_save`
 
-Runs at the end of a work session. Asks for confirmation, then:
-1. Updates `TODO.md` (new tasks, status changes with user confirmation)
-2. Updates `ARCHITECTURE.md` (if architecture changed)
-3. Proposes `CLAUDE.md` updates (permanent rules, requires confirmation)
-4. Adds entries to `CHANGELOG.md [Unreleased]`
-5. Writes `.claude/session_commit_msg.txt` — the Stop hook picks it up
+Se lance en fin de session de travail. Demande confirmation, puis :
+1. Met à jour `TODO.md` (nouvelles tâches, changements de statut avec confirmation utilisateur)
+2. Met à jour `ARCHITECTURE.md` (si l'architecture a changé)
+3. Propose des mises à jour de `CLAUDE.md` (règles permanentes, confirmation requise)
+4. Ajoute les entrées de la session dans `CHANGELOG.md [Unreleased]`
+5. Écrit `.claude/session_commit_msg.txt` — le hook Stop le récupère et commite
 
 ### `/session_handoff`
 
-Creates a self-contained `handoff_YYMMDD_[theme].md` file at the project root. Another agent starting cold can read it and continue without needing the conversation history. Also handles loading an existing handoff (Mode REPRISE).
+Crée un fichier `handoff_YYMMDD_[theme].md` autonome à la racine du projet. Un agent démarrant à froid peut le lire et reprendre sans avoir accès à l'historique de conversation. Gère aussi le chargement d'un handoff existant (Mode REPRISE).
