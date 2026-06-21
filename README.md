@@ -84,18 +84,27 @@ Ces fichiers sont le socle du système de session. Génère leur contenu en fonc
 ```markdown
 # TODO — [Nom du projet]
 
-## Fonctionnalités / Tâches
+## Vue d'ensemble
 
-| ID | Description | Statut | Prochaine action |
-|---|---|---|---|
-| FEAT-1 | ... | ✅ Fait / 🟡 En cours / ⚪ Backlog | ... |
+| ID | Titre | Statut | Prochaine action |
+|----|-------|--------|------------------|
+| [FEAT-1](#feat-1--titre) | Titre de la feature | ✅ Livré | - |
+| [FEAT-2](#feat-2--titre) | Titre de la feature | 🟡 En cours — description courte | Prochaine étape concrète |
+| [BUG-1](#bug-1--titre) | Titre du bug | 🟡 Root cause identifiée — fix en attente de validation | Valider le fix |
+| [BUG-2](#bug-2--titre) | Titre du bug | ⚪ Archivé (disprouvé) | Aucune |
 
-## Issues connues
+---
 
-| ID | Description | Statut | Prochaine action |
-|---|---|---|---|
-| BUG-1 | ... | 🟡 En investigation | ... |
+## FEAT-1 — Titre
+
+[Description détaillée, hypothèses, logs, root cause...]
+
+## BUG-1 — Titre
+
+[Description détaillée, hypothèses, logs, root cause...]
 ```
+
+Légende statuts : ✅ Validé · 🟡 En cours / en attente · ⚪ Archivé / backlog · 🔴 Bloqué
 
 **`CHANGELOG.md`** — Historique des versions. Format suggéré :
 
