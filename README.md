@@ -154,19 +154,26 @@ Adapte la liste à ton stack (remplace `npm` par `cargo`, `go`, `python`, etc. s
 
 ### Étape 7 — Commiter tout
 
+Ajoute `.claude/session_commit_msg.txt` au `.gitignore` — ce fichier est le déclencheur temporaire du hook Stop, il ne doit pas être versionné :
+
 ```bash
-git add CLAUDE.md ARCHITECTURE.md TODO.md CHANGELOG.md .claude/settings.json .claude/hooks/ .claude/skills/
+echo ".claude/session_commit_msg.txt" >> .gitignore
+git add CLAUDE.md ARCHITECTURE.md TODO.md CHANGELOG.md .gitignore .claude/settings.json .claude/hooks/ .claude/skills/
 git commit -m "chore: add Claude Code session management (agent-session-helpers)"
 git push
 ```
 
 > `.claude/settings.local.json` est intentionnellement exclu de ce commit — il est spécifique à chaque machine.
 
-### Étape 8 — Vérifier
+### Étape 8 — Redémarrer VS Code
+
+⚠️ **Redémarre VS Code** avant de tester. Claude Code charge les hooks au démarrage — sans redémarrage après l'installation, le hook Stop ne se déclenchera pas.
+
+### Étape 9 — Vérifier
 
 1. Ouvre le projet dans Claude Code — le hook SessionStart doit tourner, synchroniser git et injecter le fichier de contexte.
 2. Fais une modification, puis lance `/session_save` — il doit mettre à jour les fichiers doc et écrire `.claude/session_commit_msg.txt`.
-3. Ferme la session — le hook Stop doit commiter et pusher automatiquement.
+3. Attends la fin de la réponse de Claude — le hook Stop doit commiter et pusher automatiquement (pas besoin de fermer la fenêtre).
 4. Vérifie sur GitHub que le commit apparaît.
 
 ---
