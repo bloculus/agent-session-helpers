@@ -2,7 +2,8 @@
   "permissions": {
     "allow": [
       "Skill(session_save)",
-      "Skill(session_handoff)"
+      "Skill(session_handoff)",
+      "Write(.claude/session_commit_msg.txt)"
     ]
   },
   "hooks": {
