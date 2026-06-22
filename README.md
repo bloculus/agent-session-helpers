@@ -38,16 +38,19 @@ mkdir -p .claude/hooks .claude/skills/session_save .claude/skills/session_handof
 
 ### Étape 2 — Récupérer et copier les hooks
 
-Récupère les deux fichiers de hook depuis ce dépôt et écris-les dans `.claude/hooks/` :
+Récupère les trois fichiers de hook depuis ce dépôt et écris-les dans `.claude/hooks/` :
 
 - `https://raw.githubusercontent.com/bloculus/agent-session-helpers/main/hooks/stop_hook.sh` → `.claude/hooks/stop_hook.sh`
 - `https://raw.githubusercontent.com/bloculus/agent-session-helpers/main/hooks/session_start_hook.sh` → `.claude/hooks/session_start_hook.sh`
+- `https://raw.githubusercontent.com/bloculus/agent-session-helpers/main/hooks/pre_tool_use_hook.sh` → `.claude/hooks/pre_tool_use_hook.sh`
 
 Rends-les exécutables :
 
 ```bash
-chmod +x .claude/hooks/stop_hook.sh .claude/hooks/session_start_hook.sh
+chmod +x .claude/hooks/stop_hook.sh .claude/hooks/session_start_hook.sh .claude/hooks/pre_tool_use_hook.sh
 ```
+
+> `pre_tool_use_hook.sh` contourne un bug VS Code (#15921) qui fait que les permissions `Write` dans `settings.json` sont ignorées. Il auto-approuve silencieusement l'écriture du fichier déclencheur du hook Stop.
 
 **Optionnel :** ouvre `.claude/hooks/session_start_hook.sh` et modifie la variable `CONTEXT_FILE` (ligne ~14) pour choisir le fichier injecté au démarrage de session. Défaut : `CHANGELOG.md`. Autres options : `README.md`, `TODO.md`, ou n'importe quel autre fichier.
 

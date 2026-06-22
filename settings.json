@@ -2,11 +2,20 @@
   "permissions": {
     "allow": [
       "Skill(session_save)",
-      "Skill(session_handoff)",
-      "Write(.claude/session_commit_msg.txt)"
+      "Skill(session_handoff)"
     ]
   },
   "hooks": {
+    "PreToolUse": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash $(git rev-parse --show-toplevel 2>/dev/null)/.claude/hooks/pre_tool_use_hook.sh"
+          }
+        ]
+      }
+    ],
     "SessionStart": [
       {
         "matcher": "startup",
