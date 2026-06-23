@@ -3,7 +3,7 @@
 # Commits and pushes changes if a commit message file exists
 
 REPO=$(git rev-parse --show-toplevel 2>/dev/null)
-MSG_FILE="$REPO/.claude/session_commit_msg.txt"
+MSG_FILE="$REPO/session_commit_msg.txt"
 
 # Skip if not in a git repo or no commit message queued
 [ -n "$REPO" ] && [ -f "$MSG_FILE" ] || exit 0

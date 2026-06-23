@@ -38,19 +38,16 @@ mkdir -p .claude/hooks .claude/skills/session_save .claude/skills/session_handof
 
 ### Étape 2 — Récupérer et copier les hooks
 
-Récupère les trois fichiers de hook depuis ce dépôt et écris-les dans `.claude/hooks/` :
+Récupère les deux fichiers de hook depuis ce dépôt et écris-les dans `.claude/hooks/` :
 
 - `https://raw.githubusercontent.com/bloculus/agent-session-helpers/main/hooks/stop_hook.sh` → `.claude/hooks/stop_hook.sh`
 - `https://raw.githubusercontent.com/bloculus/agent-session-helpers/main/hooks/session_start_hook.sh` → `.claude/hooks/session_start_hook.sh`
-- `https://raw.githubusercontent.com/bloculus/agent-session-helpers/main/hooks/pre_tool_use_hook.sh` → `.claude/hooks/pre_tool_use_hook.sh`
 
 Rends-les exécutables :
 
 ```bash
-chmod +x .claude/hooks/stop_hook.sh .claude/hooks/session_start_hook.sh .claude/hooks/pre_tool_use_hook.sh
+chmod +x .claude/hooks/stop_hook.sh .claude/hooks/session_start_hook.sh
 ```
-
-> `pre_tool_use_hook.sh` contourne un bug VS Code (#15921) qui fait que les permissions `Write` dans `settings.json` sont ignorées. Il auto-approuve silencieusement l'écriture du fichier déclencheur du hook Stop.
 
 **Optionnel :** ouvre `.claude/hooks/session_start_hook.sh` et modifie la variable `CONTEXT_FILE` (ligne ~14) pour choisir le fichier injecté au démarrage de session. Défaut : `CHANGELOG.md`. Autres options : `README.md`, `TODO.md`, ou n'importe quel autre fichier.
 
@@ -147,7 +144,8 @@ Crée `.claude/settings.local.json` avec les permissions adaptées au stack du p
       "Bash(cat:*)",
       "Bash(chmod:*)",
       "WebSearch",
-      "WebFetch"
+      "WebFetch",
+      "Write(session_commit_msg.txt)"
     ]
   }
 }
@@ -157,10 +155,10 @@ Adapte la liste à ton stack (remplace `npm` par `cargo`, `go`, `python`, etc. s
 
 ### Étape 7 — Commiter tout
 
-Ajoute `.claude/session_commit_msg.txt` au `.gitignore` — ce fichier est le déclencheur temporaire du hook Stop, il ne doit pas être versionné :
+Ajoute `session_commit_msg.txt` au `.gitignore` — ce fichier est le déclencheur temporaire du hook Stop, il ne doit pas être versionné :
 
 ```bash
-echo ".claude/session_commit_msg.txt" >> .gitignore
+echo "session_commit_msg.txt" >> .gitignore
 git add CLAUDE.md ARCHITECTURE.md TODO.md CHANGELOG.md .gitignore .claude/settings.json .claude/hooks/ .claude/skills/
 git commit -m "chore: add Claude Code session management (agent-session-helpers)"
 git push
@@ -175,7 +173,7 @@ git push
 ### Étape 9 — Vérifier
 
 1. Ouvre le projet dans Claude Code — le hook SessionStart doit tourner, synchroniser git et injecter le fichier de contexte.
-2. Fais une modification, puis lance `/session_save` — il doit mettre à jour les fichiers doc et écrire `.claude/session_commit_msg.txt`.
+2. Fais une modification, puis lance `/session_save` — il doit mettre à jour les fichiers doc et écrire `session_commit_msg.txt`.
 3. Attends la fin de la réponse de Claude — le hook Stop doit commiter et pusher automatiquement (pas besoin de fermer la fenêtre).
 4. Vérifie sur GitHub que le commit apparaît.
 
@@ -190,7 +188,7 @@ Se lance en fin de session de travail. Demande confirmation, puis :
 2. Met à jour `ARCHITECTURE.md` (si l'architecture a changé)
 3. Propose des mises à jour de `CLAUDE.md` (règles permanentes, confirmation requise)
 4. Ajoute les entrées de la session dans `CHANGELOG.md [Unreleased]`
-5. Écrit `.claude/session_commit_msg.txt` — le hook Stop le récupère et commite
+5. Écrit `session_commit_msg.txt` — le hook Stop le récupère et commite
 
 ### `/session_handoff`
 
